@@ -18,7 +18,6 @@ function my_theme_enqueue_styles() {
     array( $parent_style ),
     wp_get_theme()->get('Version')
   );
-
 }
 
 add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_styles' );
@@ -39,3 +38,16 @@ function add_podcast_meta() {
   );
   $podcast_tab_custom_box = new Custom_Add_Meta_Box( 'podcast_meta_custom', 'Podcast extra details', $podcast_tab_custom, 'podcast', true );
 }
+
+function wp1482371_custom_post_type_args( $args, $post_type ) {
+  if ( $post_type == "podcast" ) {
+    $args['rewrite'] = array(
+      'slug' => 'episodes',
+      'with_front' => false
+    );
+  }
+
+  return $args;
+}
+
+add_filter( 'register_post_type_args', 'wp1482371_custom_post_type_args', 20, 2 );

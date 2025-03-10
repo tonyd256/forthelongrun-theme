@@ -11,14 +11,18 @@
 //
 //
 add_action( 'admin_menu', 'importer_admin_menu_register' );
-add_action( 'admin_enqueue_scripts', 'load_scripts' );
 
 function importer_admin_menu_register() {
   // add_submenu_page( get_template_directory() . '/inc/core-setup/custom-types/podcast/podcast-type.php', 'Podcast Importer', 'Podcast Importer', 'manage_options', 'import-podcast', 'importer_admin_menu_render' );
-  add_menu_page( 'Podcast Importer', 'Podcast Importer', 'manage_options', 'import-podcast', 'importer_admin_menu_render' );
+  $menu = add_menu_page( 'Podcast Importer', 'Podcast Importer', 'manage_options', 'import-podcast', 'importer_admin_menu_render' );
+  add_action( 'load-'.$menu, 'load_scripts' );
 }
 
 function load_scripts() {
+  add_action( 'admin_enqueue_scripts', 'enqueue_scripts' );
+}
+
+function enqueue_scripts() {
   wp_enqueue_script( 'importer-script', get_stylesheet_directory_uri() . '/js/importer.js', array( 'jquery' ), null, true );
 
   wp_localize_script( 'importer-script', 'settings', array(
