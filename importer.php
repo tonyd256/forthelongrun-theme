@@ -46,7 +46,7 @@ add_action('wp_ajax_import_podcast', 'import_podcast');
 function import_podcast() {
   // import podcast.
   // get post to see if it already exists
-  if (post_exists(wp_encode_emoji(wp_strip_all_tags($_POST['title'])))) {
+  if (post_exists(wp_encode_emoji(wp_strip_all_tags($_POST['title'])), '', '', 'podcast', 'published')) {
     echo "0";
     exit();
   }
