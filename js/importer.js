@@ -63,7 +63,7 @@ function processData(data) {
 }
 
 function importPodcast() {
-  if (importList.length > 0 && epCount < 10) {
+  if (importList.length > 0) {
     epCount++;
     var json = importList.pop();
 
