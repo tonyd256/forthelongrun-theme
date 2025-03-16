@@ -41,10 +41,15 @@ function add_podcast_meta() {
 
 function wp1482371_custom_post_type_args( $args, $post_type ) {
   if ( $post_type == "podcast" ) {
-    $args['rewrite'] = array(
+    $args['rewrite'] = array_merge($args['rewrite'], array(
       'slug' => 'episodes',
       'with_front' => false
-    );
+    ));
+  } else if ( $post_type == "podcast-category" ) {
+    $args['rewrite'] = array_merge($args['rewrite'], array(
+      'slug' => 'episodes',
+      'with_front' => false
+    ));
   }
 
   return $args;
