@@ -45,7 +45,13 @@ function wp1482371_custom_post_type_args( $args, $post_type ) {
       'slug' => 'episodes',
       'with_front' => false
     ));
-  } else if ( $post_type == "podcast-category" ) {
+  }
+
+  return $args;
+}
+
+function wp1482371_custom_taxonomy_args( $args, $taxonomy ) {
+  if ( $taxonomy == "podcast-category" ) {
     $args['rewrite'] = array_merge($args['rewrite'], array(
       'slug' => 'episodes',
       'with_front' => false
@@ -56,3 +62,4 @@ function wp1482371_custom_post_type_args( $args, $post_type ) {
 }
 
 add_filter( 'register_post_type_args', 'wp1482371_custom_post_type_args', 20, 2 );
+add_filter( 'register_taxonomy_args', 'wp1482371_custom_taxonomy_args', 20, 2 );
