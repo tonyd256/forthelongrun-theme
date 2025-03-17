@@ -46,9 +46,10 @@ function wp1482371_custom_post_type_args( $args, $post_type ) {
       'with_front' => false
     ));
   } elseif ( $post_type == "post" ) {
-    $args['rewrite'] = array_merge($args['rewrite'], array(
-      'slug' => 'blog'
-    ));
+    $args['rewrite'] = array(
+      'slug' => 'blog',
+      'with_front' => false
+    );
   }
 
   return $args;
