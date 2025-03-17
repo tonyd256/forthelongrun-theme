@@ -53,7 +53,7 @@ function wp1482371_custom_post_type_args( $args, $post_type ) {
 function wp1482371_custom_taxonomy_args( $args, $taxonomy ) {
   if ( $taxonomy == "podcast-category" ) {
     $args['rewrite'] = array_merge($args['rewrite'], array(
-      'slug' => 'episodes',
+      'slug' => 'episode-categories',
       'with_front' => false
     ));
   }
