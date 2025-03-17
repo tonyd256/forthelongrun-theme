@@ -45,6 +45,10 @@ function wp1482371_custom_post_type_args( $args, $post_type ) {
       'slug' => 'episodes',
       'with_front' => false
     ));
+  } else if ( $post_type == "post" ) {
+    $args['rewrite'] = array_merge($args['rewrite'], array(
+      'slug' => 'blog'
+    ));
   }
 
   return $args;
