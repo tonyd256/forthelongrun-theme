@@ -1,0 +1,26 @@
+.sponsors-elementor-widget {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  flex-wrap: wrap;
+  position: relative;
+  width: 100%;
+}
+
+.sponsors-elementor-widget > img {
+  margin-bottom: 20px;
+}
+
+.sponsors-elementor-widget-name {
+  width: 100%;
+  padding: 0 20px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  line-height: 1.4em;
+  margin-top: 0;
+}
+
+.sponsors-elementor-widget > p {
+  width: 100%;
+  padding: 0 20px;
+}
