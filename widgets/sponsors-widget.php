@@ -182,7 +182,7 @@ class Elementor_Sponsors_Widget extends \Elementor\Widget_Base {
       return;
     }
 
-    echo '<div class="sponsors-elementor-widget"><div class="sponsors-elementor-widget-image>';
+    echo '<div class="sponsors-elementor-widget"><div class="sponsors-elementor-widget-image">';
 
     // Get image 'thumbnail' by ID
     // echo wp_get_attachment_image( $settings['image']['id'], 'thumbnail' );
