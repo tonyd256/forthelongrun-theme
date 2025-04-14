@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) { die( '-1' ); }
 
 define( 'CHILD_DIR', get_stylesheet_directory() );
 
+require_once __DIR__ . '/lib/wp-async-task.php';
 require_once CHILD_DIR . '/importer.php';
 require_once( __DIR__ . '/widgets.php' );
 

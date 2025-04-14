@@ -9,7 +9,10 @@
 // download image to media files
 // calculate episode number
 //
-//
+
+require_once CHILD_DIR . '/Podcast_Importer.php';
+$importer;
+
 add_action( 'admin_menu', 'importer_admin_menu_register' );
 
 function importer_admin_menu_register() {
@@ -44,37 +47,72 @@ function importer_admin_menu_render() {
 
 add_action('wp_ajax_import_podcast', 'import_podcast');
 function import_podcast() {
-  // import podcast.
-  // get post to see if it already exists
-  if (post_exists(wp_encode_emoji(wp_strip_all_tags($_POST['title'])), '', '', 'podcast', 'publish')) {
-    echo "0";
-    exit();
+  if (is_null($importer)) {
+    $importer = new Podcast_Importer();
+  }
+  $importer->run_action();
+
+  exit();
+}
+
+add_action('wp_async_import_podcast', 'fetch_and_import');
+function fetch_and_import() {
+  $rss = fetch_feed("https://anchor.fm/s/81032c4/podcast/rss");
+
+  if ( ! is_wp_error( $rss ) ) {
+    $qtn = $rss->get_item_quantity();
+
+    for ($i = 0; $i < 5; $i++) {
+      $item = $rss->get_item(4 - $i);
+
+      $ep = array(
+        "title" => $item->get_title(),
+        "description" => $item->get_description(),
+        "date" => $item->get_date('Y-m-d H:i:s'),
+        "number" => $qtn - (4 - $i),
+        "source" => $item->get_enclosure()->get_link(),
+        "image" => array_values($item->get_item_tags("http://www.itunes.com/dtds/podcast-1.0.dtd", "image")[0]["attribs"])[0]["href"],
+        "duration" => $item->get_item_tags("http://www.itunes.com/dtds/podcast-1.0.dtd", "duration")[0]["data"], //)[0]["href"],
+        "link" => $item->get_link(),
+      );
+      // error_log(print_r($ep, true));
+      import_episode($ep);
+    }
   }
 
-  $date = DateTime::createFromFormat('D, d M Y G:i:s T', $_POST['pubDate']);
+  exit();
+}
+
+function import_episode($episode) {
+  // import podcast.
+  // get post to see if it already exists
+  if (post_exists(wp_encode_emoji(wp_strip_all_tags($episode['title'])), '', '', 'podcast', 'publish')) {
+    return;
+  }
 
   $post_id = wp_insert_post(array(
-    'post_title' => wp_encode_emoji(wp_strip_all_tags($_POST['title'])),
+    'post_title' => wp_encode_emoji(wp_strip_all_tags($episode['title'])),
     'post_author' => '261764034',
-    'post_content' => wp_encode_emoji($_POST['description']),
-    'post_date' => $date->format('Y-m-d H:i:s'),
+    'post_content' => wp_encode_emoji($episode['description']),
+    'post_date' => $episode['date'],
     'post_type' => 'podcast',
     'post_status' => 'publish',
     'meta_input' => array(
-      '_podcast_ep' => $_POST['number'] . "",
-      '_podcast_date' => $date->format('Y-m-d'),
-      '_podcast_resourceurl' => $_POST['source'],
-      'enclosure' => $_POST['source'],
+      '_podcast_ep' => $episode['number'] . "",
+      '_podcast_date' => $episode['date'],
+      '_podcast_resourceurl' => $episode['source'],
+      'enclosure' => $episode['source'],
       '_podcast_artist' => 'jlevitt815',
-      '_podcast_link' => $_POST['link'],
-      '_podcast_duration' => $_POST['duration']
+      '_podcast_link' => $episode['link'],
+      '_podcast_duration' => $episode['duration']
     )
   ));
 
-  import_featured_image_from_url($post_id, $_POST['image']);
+  if (! empty($post_id) && ! is_wp_error($post_id)) {
+    import_featured_image_from_url($post_id, $episode['image']);
+  }
 
-  echo $post_id;
-  exit();
+  error_log($post_id);
 }
 
 // copied from: https://gist.github.com/gkarthikeyanmca/35cd2481e63de7b8e00cb185d61d01e5
