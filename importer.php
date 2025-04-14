@@ -11,21 +11,21 @@
 //
 
 require_once CHILD_DIR . '/Podcast_Importer.php';
-$importer;
+$ftlrp_importer;
 
-add_action( 'admin_menu', 'importer_admin_menu_register' );
+add_action( 'admin_menu', 'ftlrp_importer_admin_menu_register' );
 
-function importer_admin_menu_register() {
+function ftlrp_importer_admin_menu_register() {
   // add_submenu_page( get_template_directory() . '/inc/core-setup/custom-types/podcast/podcast-type.php', 'Podcast Importer', 'Podcast Importer', 'manage_options', 'import-podcast', 'importer_admin_menu_render' );
-  $menu = add_menu_page( 'Podcast Importer', 'Podcast Importer', 'manage_options', 'import-podcast', 'importer_admin_menu_render' );
-  add_action( 'load-'.$menu, 'load_scripts' );
+  $menu = add_menu_page( 'Podcast Importer', 'Podcast Importer', 'manage_options', 'import-podcast', 'ftlrp_importer_admin_menu_render' );
+  add_action( 'load-'.$menu, 'ftlrp_load_scripts' );
 }
 
-function load_scripts() {
-  add_action( 'admin_enqueue_scripts', 'enqueue_scripts' );
+function ftlrp_load_scripts() {
+  add_action( 'admin_enqueue_scripts', 'ftlrp_enqueue_scripts' );
 }
 
-function enqueue_scripts() {
+function ftlrp_enqueue_scripts() {
   wp_enqueue_script( 'importer-script', get_stylesheet_directory_uri() . '/js/importer.js', array( 'jquery' ), null, true );
 
   wp_localize_script( 'importer-script', 'settings', array(
@@ -34,7 +34,7 @@ function enqueue_scripts() {
   ) );
 }
 
-function importer_admin_menu_render() {
+function ftlrp_importer_admin_menu_render() {
   global $title;
 
   print '<div class="wrap">';
@@ -45,18 +45,19 @@ function importer_admin_menu_render() {
   print '</div>';
 }
 
-add_action('wp_ajax_import_podcast', 'import_podcast');
-function import_podcast() {
-  if (is_null($importer)) {
-    $importer = new Podcast_Importer();
+add_action('wp_ajax_import_podcast', 'ftlrp_import_podcast');
+add_action('import_podcast_cron_hook', 'ftlrp_import_podcast');
+function ftlrp_import_podcast() {
+  if (is_null($ftlrp_importer)) {
+    $ftlrp_importer = new Podcast_Importer();
   }
-  $importer->run_action();
+  $ftlrp_importer->run_action();
 
   exit();
 }
 
-add_action('wp_async_import_podcast', 'fetch_and_import');
-function fetch_and_import() {
+add_action('wp_async_import_podcast', 'ftlrp_fetch_and_import');
+function ftlrp_fetch_and_import() {
   $rss = fetch_feed("https://anchor.fm/s/81032c4/podcast/rss");
 
   if ( ! is_wp_error( $rss ) ) {
@@ -76,14 +77,14 @@ function fetch_and_import() {
         "link" => $item->get_link(),
       );
       // error_log(print_r($ep, true));
-      import_episode($ep);
+      ftlrp_import_episode($ep);
     }
   }
 
   exit();
 }
 
-function import_episode($episode) {
+function ftlrp_import_episode($episode) {
   // import podcast.
   // get post to see if it already exists
   if (post_exists(wp_encode_emoji(wp_strip_all_tags($episode['title'])), '', '', 'podcast', 'publish')) {
@@ -109,14 +110,14 @@ function import_episode($episode) {
   ));
 
   if (! empty($post_id) && ! is_wp_error($post_id)) {
-    import_featured_image_from_url($post_id, $episode['image']);
+    ftlrp_import_featured_image_from_url($post_id, $episode['image']);
   }
 
   error_log($post_id);
 }
 
 // copied from: https://gist.github.com/gkarthikeyanmca/35cd2481e63de7b8e00cb185d61d01e5
-function import_featured_image_from_url( $post_id = '', $image_url ='' ) {
+function ftlrp_import_featured_image_from_url( $post_id = '', $image_url ='' ) {
   //Check both post_id and image_url is not empty
   if($post_id == '' || $image_url == '') {
     return;
