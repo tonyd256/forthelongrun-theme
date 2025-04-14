@@ -70,3 +70,22 @@ function wp1482371_custom_taxonomy_args( $args, $taxonomy ) {
 
 add_filter( 'register_post_type_args', 'wp1482371_custom_post_type_args', 20, 2 );
 add_filter( 'register_taxonomy_args', 'wp1482371_custom_taxonomy_args', 20, 2 );
+
+function rewrite_blog_post_url($permalink, $post) {
+  $new_link = str_lreplace('/', '/blog/', $permalink);
+  return $new_link;
+}
+
+function str_lreplace($search, $replace, $subject)
+{
+    $pos = strrpos($subject, $search);
+
+    if($pos !== false)
+    {
+        $subject = substr_replace($subject, $replace, $pos, strlen($search));
+    }
+
+    return $subject;
+}
+
+add_filter( 'post_link', 'rewrite_blog_post_url', 10, 1);
