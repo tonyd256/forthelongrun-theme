@@ -88,4 +88,4 @@ function str_lreplace($search, $replace, $subject)
     return $subject;
 }
 
-add_filter( 'post_link', 'rewrite_blog_post_url', 10, 1);
+add_filter( 'post_link', 'rewrite_blog_post_url', 10, 2);
