@@ -58,6 +58,7 @@ function ftlrp_import_podcast() {
 
 add_action('wp_async_import_podcast', 'ftlrp_fetch_and_import');
 function ftlrp_fetch_and_import() {
+  error_log("Starting podcast import...");
   $rss = fetch_feed("https://anchor.fm/s/81032c4/podcast/rss");
 
   if ( ! is_wp_error( $rss ) ) {
@@ -81,11 +82,15 @@ function ftlrp_fetch_and_import() {
     }
   }
 
+  error_log("Ending podcast import.");
   exit();
 }
 
 function ftlrp_import_episode($episode) {
-  // import podcast.
+  if ( ! function_exists( 'post_exists' ) ) {
+    require_once( ABSPATH . 'wp-admin/includes/post.php' );
+  }
+
   // get post to see if it already exists
   if (post_exists(wp_encode_emoji(wp_strip_all_tags($episode['title'])), '', '', 'podcast', 'publish')) {
     return;
