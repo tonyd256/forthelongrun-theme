@@ -89,6 +89,9 @@ function ftlrp_fetch_and_import() {
 function ftlrp_import_episode($episode) {
   if ( ! function_exists( 'post_exists' ) ) {
     require_once( ABSPATH . 'wp-admin/includes/post.php' );
+    require_once(ABSPATH . 'wp-admin/includes/media.php');
+    require_once(ABSPATH . 'wp-admin/includes/file.php');
+    require_once(ABSPATH . 'wp-admin/includes/image.php');
   }
 
   // get post to see if it already exists
@@ -133,9 +136,6 @@ function ftlrp_import_featured_image_from_url( $post_id = '', $image_url ='' ) {
 
   //Handle Upload - Refer https://developer.wordpress.org/reference/functions/media_sideload_image/
   $attach_id = media_sideload_image($image_url, $post_id, null, 'id');
-
-  // Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
-  require_once( ABSPATH . 'wp-admin/includes/image.php' );
 
   // Generate the metadata for the attachment, and update the database record.
   $attach_data = wp_generate_attachment_metadata( $attach_id, get_attached_file( $attach_id ) );
