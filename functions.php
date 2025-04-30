@@ -22,6 +22,8 @@ function my_theme_enqueue_styles() {
   );
 }
 
+add_filter( 'theme_mod_breadcrumb_on', function ($name) { return 0; } );
+
 add_action( 'wp_enqueue_scripts', 'my_theme_enqueue_styles' );
 add_action('init', 'add_podcast_meta');  
 
