@@ -17,3 +17,10 @@
  * 
  */
 
+.wpcasterpro-tabs__switch {
+  display: none;
+}
+
+#wpcasterpro-tabslist {
+  display: none;
+}
